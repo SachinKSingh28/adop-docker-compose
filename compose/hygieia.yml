@@ -9,9 +9,11 @@ mongodb:
 #  - hygieia-mongo:/data/db:rw
   environment:
   - HYGIEIA_DB=dashboard
-  - HYGIEIA_DB_USER=hygieia
-  - HYGIEIA_DB_PASS=hygieia
-hygieia-api:
+
+  - HYGIEIA_DB_USER=${HYGIEIA_MONGODB_USER}
+  - HYGIEIA_DB_PASS=${HYGIEIA_MONGODB_PASSWORD}
+
+  hygieia-api:
   image: capitaloneio/hygieia-api:latest
   container_name: hygieia-api
   net: ${CUSTOM_NETWORK_NAME}
@@ -20,8 +22,10 @@ hygieia-api:
   environment:
   - SPRING_DATA_MONGODB_HOST=hygieia-mongodb
   - SPRING_DATA_MONGODB_PORT=27017
-  - SPRING_DATA_MONGODB_USERNAME=hygieia
-  - SPRING_DATA_MONGODB_PASSWORD=hygieia
+
+  - SPRING_DATA_MONGODB_USERNAME=${HYGIEIA_MONGODB_USER}
+  - SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_PASSWORD}
+
 hygieia-ui:
   image: capitaloneio/hygieia-ui:latest
   container_name: hygieia-ui
@@ -54,8 +58,10 @@ hygieia-jenkins-build-collector:
   - JENKINS_MASTER=${PROTO}://${TARGET_HOST}/jenkins/
 ##If using username/token for api authentication (required for Cloudbees Jenkins Ops Center) see sample
 ##  - JENKINS_OP_CENTER=${PROTO}://${INITIAL_ADMIN_USER}:${INITIAL_ADMIN_PASSWORD_PLAIN}@${TARGET_HOST}/jenkins/
-  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME=hygieia
-  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD=hygieia
+
+  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME=${HYGIEIA_MONGODB_USER}
+  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_PASSWORD}
+
   - MONGO_PORT=tcp://hygieia-mongodb:27017
 ##Another option: If using same username/password Jenkins auth - set username/apiKey to use HTTP Basic Auth (blank=no auth)
   - JENKINS_USERNAME=${INITIAL_ADMIN_USER}
@@ -92,8 +98,10 @@ hygieia-sonar-codequality-collector:
   environment:
   - SONAR_CRON=* * * * * *
   - SONAR_URL=http://${INITIAL_ADMIN_USER}:${INITIAL_ADMIN_PASSWORD_PLAIN}@sonar:9000
-  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME=hygieia
-  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD=hygieia
+
+  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME=${HYGIEIA_MONGODB_USER}
+  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_PASSWORD}
+
   - MONGO_PORT=tcp://hygieia-mongodb:27017
 
 #hygieia-chat-ops-collector:

@@ -26,6 +26,11 @@ export SONAR_MYSQL_USER="sonar"
 export SONAR_MYSQL_PASSWORD="sonar"
 export SONAR_MYSQL_DATABASE="sonar"
 
+# Hygieia MongoDB 
+
+export HYGIEIA_MONGODB_USER="hygieia"
+export HYGIEIA_MONGODB_PASSWORD="hygieia"
+
 # Jenkins
 
 export SONAR_ACCOUNT_LOGIN="jenkins"
