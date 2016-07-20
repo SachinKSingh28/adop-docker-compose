@@ -9,12 +9,11 @@ mongodb:
 #  - hygieia-mongo:/data/db:rw
   environment:
   - HYGIEIA_DB=dashboard
-
   - HYGIEIA_DB_USER=${HYGIEIA_MONGODB_USER}
   - HYGIEIA_DB_PASS=${HYGIEIA_MONGODB_PASSWORD}
 
-  hygieia-api:
-  image: capitaloneio/hygieia-api:latest
+hygieia-api:
+  image: kramos/hygieia-api:latest
   container_name: hygieia-api
   net: ${CUSTOM_NETWORK_NAME}
   expose:
@@ -22,12 +21,11 @@ mongodb:
   environment:
   - SPRING_DATA_MONGODB_HOST=hygieia-mongodb
   - SPRING_DATA_MONGODB_PORT=27017
-
   - SPRING_DATA_MONGODB_USERNAME=${HYGIEIA_MONGODB_USER}
   - SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_PASSWORD}
 
 hygieia-ui:
-  image: capitaloneio/hygieia-ui:latest
+  image: kramos/hygieia-ui:latest
   container_name: hygieia-ui
   net: ${CUSTOM_NETWORK_NAME}
   ports:
@@ -36,21 +34,22 @@ hygieia-ui:
   - API_HOST=hygieia-api
   - API_PORT=8080
 
-
-#hygieia-github-scm-collector:
-#  image: capitalone/hygieia-github-scm-collector:latest
-#  container_name: hygieia-github
-#  net: ${CUSTOM_NETWORK_NAME}
+hygieia-github-scm-collector:
+  image: kramos/hygieia-github-scm-collector:latest
+  container_name: hygieia-github
+  net: ${CUSTOM_NETWORK_NAME}
 # place any values you want to change in docker-compose.override.yml
-#  environment:
-#  - GITHUB_HOST=github.com
-#  - GITHUB_CRON='0 0/5 * * * *'
-#  - GITHUB_COMMIT_THREASHOLD_DAYS=15
-
+  environment:
+  - GITHUB_HOST=github.com
+  - GITHUB_CRON=* * * * * *
+  - GITHUB_COMMIT_THREASHOLD_DAYS=15
+  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME=${HYGIEIA_MONGODB_USER}
+  - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_USER}
+  - MONGO_PORT=tcp://hygieia-mongodb:27017
 
 
 hygieia-jenkins-build-collector:
-  image: capitalone/hygieia-jenkins-build-collector:latest
+  image: kramos/hygieia-jenkins-build-collector:latest
   container_name: hygieia-jenkins-build
   net: ${CUSTOM_NETWORK_NAME}
   environment:
@@ -58,10 +57,8 @@ hygieia-jenkins-build-collector:
   - JENKINS_MASTER=${PROTO}://${TARGET_HOST}/jenkins/
 ##If using username/token for api authentication (required for Cloudbees Jenkins Ops Center) see sample
 ##  - JENKINS_OP_CENTER=${PROTO}://${INITIAL_ADMIN_USER}:${INITIAL_ADMIN_PASSWORD_PLAIN}@${TARGET_HOST}/jenkins/
-
   - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME=${HYGIEIA_MONGODB_USER}
   - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_PASSWORD}
-
   - MONGO_PORT=tcp://hygieia-mongodb:27017
 ##Another option: If using same username/password Jenkins auth - set username/apiKey to use HTTP Basic Auth (blank=no auth)
   - JENKINS_USERNAME=${INITIAL_ADMIN_USER}
@@ -92,17 +89,17 @@ hygieia-jenkins-build-collector:
 ##  - JENKINS_SAVE_LOG=true
 #
 hygieia-sonar-codequality-collector:
-  image: capitalone/hygieia-sonar-codequality-collector:latest
+  image: kramos/hygieia-sonar-codequality-collector:latest
   container_name: hygieia-sonar-codequality
-  net: local_network
+  net: ${CUSTOM_NETWORK_NAME}
   environment:
   - SONAR_CRON=* * * * * *
-  - SONAR_URL=http://${INITIAL_ADMIN_USER}:${INITIAL_ADMIN_PASSWORD_PLAIN}@sonar:9000
-
+  - SONAR_URL=http://sonar:9000/sonar
   - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME=${HYGIEIA_MONGODB_USER}
   - HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_PASSWORD}
-
   - MONGO_PORT=tcp://hygieia-mongodb:27017
+  - SONAR_USERNAME=${INITIAL_ADMIN_USER}
+  - SONAR_PASSWORD=${INITIAL_ADMIN_PASSWORD_PLAIN}
 
 #hygieia-chat-ops-collector:
 #  image: capitalone/hygieia-chat-ops-collector:latest
