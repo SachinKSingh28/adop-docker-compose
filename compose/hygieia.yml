@@ -25,7 +25,7 @@ hygieia-api:
   - SPRING_DATA_MONGODB_PASSWORD=${HYGIEIA_MONGODB_PASSWORD}
 
 hygieia-ui:
-  image: sachin28/hygieia-ui:latest
+  image: sachin28/hygieia-ui:0.0.2
   container_name: hygieia-ui
   net: ${CUSTOM_NETWORK_NAME}
   ports:
